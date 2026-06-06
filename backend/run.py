@@ -1,6 +1,17 @@
+import os
 from app import create_app
 
 app = create_app()
+
+
+def run_migrations():
+    with app.app_context():
+        from flask_migrate import upgrade
+        upgrade()
+
+
+if os.environ.get("FLASK_ENV") == "production":
+    run_migrations()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
