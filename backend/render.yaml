@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: handball-cup-api
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: flask db upgrade && gunicorn run:app --workers 2 --bind 0.0.0.0:$PORT --timeout 120
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false          # Pegar la URL de Supabase manualmente en Render
+      - key: ALLOWED_ORIGINS
+        sync: false          # URL de Vercel, ej: https://handball-cup.vercel.app
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
