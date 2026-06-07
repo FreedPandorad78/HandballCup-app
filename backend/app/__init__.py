@@ -27,11 +27,12 @@ def _init_extensions(app: Flask) -> None:
 
     # Importar modelos para que Alembic los detecte
     with app.app_context():
-        from .models import Equipo, Jugador, Partido, Evento  # noqa: F401
+        from .models import Categoria, Equipo, Jugador, Partido, Evento  # noqa: F401
 
 
 def _register_blueprints(app: Flask) -> None:
     from .routes.auth_routes import auth_bp
+    from .routes.categoria_routes import categoria_bp
     from .routes.equipo_routes import equipo_bp
     from .routes.jugador_routes import jugador_bp
     from .routes.partido_routes import partido_bp
@@ -39,6 +40,7 @@ def _register_blueprints(app: Flask) -> None:
     from .routes.estadisticas_routes import estadisticas_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
+    app.register_blueprint(categoria_bp, url_prefix="/api/categorias")
     app.register_blueprint(equipo_bp, url_prefix="/api/equipos")
     app.register_blueprint(jugador_bp, url_prefix="/api/jugadores")
     app.register_blueprint(partido_bp, url_prefix="/api/partidos")

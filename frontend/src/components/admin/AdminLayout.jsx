@@ -3,6 +3,7 @@ import { useAuth } from '../../hooks/useAuth'
 
 const LINKS = [
   { to: '/admin', label: 'Dashboard', end: true },
+  { to: '/admin/categorias', label: 'Categorías' },
   { to: '/admin/equipos', label: 'Equipos' },
   { to: '/admin/jugadores', label: 'Jugadores' },
   { to: '/admin/fixture', label: 'Fixture' },

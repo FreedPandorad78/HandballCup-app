@@ -8,7 +8,11 @@ equipo_bp = Blueprint("equipos", __name__)
 
 @equipo_bp.get("/")
 def listar_equipos():
-    equipos = Equipo.query.order_by(Equipo.nombre).all()
+    categoria_id = request.args.get("categoria")
+    query = Equipo.query
+    if categoria_id:
+        query = query.filter_by(categoria_id=categoria_id)
+    equipos = query.order_by(Equipo.nombre).all()
     return jsonify([_to_dict(e) for e in equipos]), 200
 
 
@@ -25,11 +29,13 @@ def crear_equipo():
     nombre = (data.get("nombre") or "").strip()
     if not nombre:
         return jsonify({"error": "El campo 'nombre' es obligatorio"}), 400
-
     if Equipo.query.filter_by(nombre=nombre).first():
         return jsonify({"error": "Ya existe un equipo con ese nombre"}), 409
-
-    equipo = Equipo(nombre=nombre, logo_url=data.get("logo_url"))
+    equipo = Equipo(
+        nombre=nombre,
+        logo_url=data.get("logo_url"),
+        categoria_id=data.get("categoria_id"),
+    )
     db.session.add(equipo)
     db.session.commit()
     return jsonify(_to_dict(equipo)), 201
@@ -53,6 +59,9 @@ def actualizar_equipo(equipo_id):
     if "logo_url" in data:
         equipo.logo_url = data["logo_url"]
 
+    if "categoria_id" in data:
+        equipo.categoria_id = data["categoria_id"]
+
     db.session.commit()
     return jsonify(_to_dict(equipo)), 200
 
@@ -71,5 +80,7 @@ def _to_dict(equipo: Equipo) -> dict:
         "id": equipo.id,
         "nombre": equipo.nombre,
         "logo_url": equipo.logo_url,
+        "categoria_id": equipo.categoria_id,
+        "categoria": equipo.categoria.nombre if equipo.categoria else None,
         "created_at": equipo.created_at.isoformat() if equipo.created_at else None,
     }

@@ -10,7 +10,11 @@ partido_bp = Blueprint("partidos", __name__)
 
 @partido_bp.get("/")
 def listar_partidos():
-    partidos = Partido.query.order_by(Partido.fecha).all()
+    categoria_id = request.args.get("categoria")
+    query = Partido.query
+    if categoria_id:
+        query = query.filter_by(categoria_id=categoria_id)
+    partidos = query.order_by(Partido.fecha).all()
     return jsonify([_to_dict(p) for p in partidos]), 200
 
 
@@ -38,8 +42,13 @@ def crear_partido():
     if not fase:
         return jsonify({"error": "El campo 'fase' es obligatorio"}), 400
 
-    db.get_or_404(Equipo, local_id)
+    local = db.get_or_404(Equipo, local_id)
     db.get_or_404(Equipo, visitante_id)
+
+    if local.categoria_id:
+        visitante = Equipo.query.get(visitante_id)
+        if visitante and visitante.categoria_id and visitante.categoria_id != local.categoria_id:
+            return jsonify({"error": "Los equipos deben pertenecer a la misma categoría"}), 400
 
     try:
         fecha = datetime.fromisoformat(fecha_str)
@@ -51,6 +60,7 @@ def crear_partido():
         equipo_visitante_id=visitante_id,
         fecha=fecha,
         fase=fase,
+        categoria_id=local.categoria_id,
     )
     db.session.add(partido)
     db.session.commit()
@@ -106,6 +116,8 @@ def eliminar_partido(partido_id):
 def _to_dict(partido: Partido, include_eventos: bool = False) -> dict:
     d = {
         "id": partido.id,
+        "categoria_id": partido.categoria_id,
+        "categoria": partido.categoria.nombre if partido.categoria else None,
         "equipo_local_id": partido.equipo_local_id,
         "equipo_local": partido.equipo_local.nombre,
         "equipo_visitante_id": partido.equipo_visitante_id,

@@ -1,5 +1,10 @@
 import api from './client'
 
-export const getPosiciones = () => api.get('/estadisticas/posiciones')
-export const getGoleadores = () => api.get('/estadisticas/goleadores')
-export const getTarjetas = () => api.get('/estadisticas/tarjetas')
+export const getPosiciones = (categoriaId) =>
+  api.get('/estadisticas/posiciones', categoriaId ? { params: { categoria: categoriaId } } : {})
+
+export const getGoleadores = (categoriaId) =>
+  api.get('/estadisticas/goleadores', categoriaId ? { params: { categoria: categoriaId } } : {})
+
+export const getTarjetas = (categoriaId) =>
+  api.get('/estadisticas/tarjetas', categoriaId ? { params: { categoria: categoriaId } } : {})

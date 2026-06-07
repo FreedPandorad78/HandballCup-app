@@ -9,12 +9,9 @@ class Partido(db.Model):
     ESTADOS = ("PROGRAMADO", "EN_CURSO", "FINALIZADO")
 
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    equipo_local_id = db.Column(
-        db.String(36), db.ForeignKey("equipos.id"), nullable=False
-    )
-    equipo_visitante_id = db.Column(
-        db.String(36), db.ForeignKey("equipos.id"), nullable=False
-    )
+    categoria_id = db.Column(db.String(36), db.ForeignKey("categorias.id"), nullable=True)
+    equipo_local_id = db.Column(db.String(36), db.ForeignKey("equipos.id"), nullable=False)
+    equipo_visitante_id = db.Column(db.String(36), db.ForeignKey("equipos.id"), nullable=False)
     fecha = db.Column(db.DateTime, nullable=False)
     estado = db.Column(db.String(20), nullable=False, default="PROGRAMADO")
     goles_local = db.Column(db.Integer, default=0, nullable=False)
@@ -22,6 +19,7 @@ class Partido(db.Model):
     fase = db.Column(db.String(50), nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
+    categoria = db.relationship("Categoria", back_populates="partidos")
     equipo_local = db.relationship(
         "Equipo", foreign_keys=[equipo_local_id], back_populates="partidos_local"
     )

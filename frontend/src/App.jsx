@@ -10,6 +10,7 @@ import EstadisticasPage from './pages/public/EstadisticasPage'
 
 import LoginPage from './pages/admin/LoginPage'
 import DashboardPage from './pages/admin/DashboardPage'
+import CategoriasPage from './pages/admin/CategoriasPage'
 import EquiposPage from './pages/admin/EquiposPage'
 import JugadoresPage from './pages/admin/JugadoresPage'
 import FixtureAdminPage from './pages/admin/FixtureAdminPage'
@@ -49,6 +50,7 @@ export default function App() {
             }
           >
             <Route index element={<DashboardPage />} />
+            <Route path="categorias" element={<CategoriasPage />} />
             <Route path="equipos" element={<EquiposPage />} />
             <Route path="jugadores" element={<JugadoresPage />} />
             <Route path="fixture" element={<FixtureAdminPage />} />

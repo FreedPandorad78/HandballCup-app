@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { getCategorias } from '../../api/categorias'
 import { getPartidos } from '../../api/partidos'
 import TarjetaPartido from '../../components/handball/TarjetaPartido'
+import CategoriaTabs from '../../components/ui/CategoriaTabs'
 import Spinner from '../../components/ui/Spinner'
 
-const ORDEN_FASE = ['Fase de grupos', 'Cuartos de final', 'Semifinal', 'Final']
+const ORDEN_FASE = ['Fase de grupos', 'Cuartos de final', 'Semifinal', 'Tercer puesto', 'Final']
 
 function ordenarFases(fases) {
   return [...fases].sort((a, b) => {
@@ -17,22 +19,29 @@ function ordenarFases(fases) {
 }
 
 export default function FixturePage() {
+  const [categorias, setCategorias] = useState([])
+  const [categoriaId, setCategoriaId] = useState(null)
   const [partidos, setPartidos] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    getPartidos()
+    getCategorias().then((res) => {
+      setCategorias(res.data)
+      if (res.data.length > 0) setCategoriaId(res.data[0].id)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!categoriaId) return
+    setLoading(true)
+    getPartidos(categoriaId)
       .then((res) => setPartidos(res.data))
       .catch(() => setError('No se pudo cargar el fixture.'))
       .finally(() => setLoading(false))
-  }, [])
+  }, [categoriaId])
 
-  if (loading) return <Spinner />
-
-  if (error) {
-    return <div className="max-w-2xl mx-auto px-4 py-12 text-center text-slate-500 text-sm">{error}</div>
-  }
+  if (!categoriaId && !error) return <Spinner />
 
   const porFase = partidos.reduce((acc, p) => {
     const fase = p.fase || 'General'
@@ -40,34 +49,38 @@ export default function FixturePage() {
     acc[fase].push(p)
     return acc
   }, {})
-
   const fasesOrdenadas = ordenarFases(Object.keys(porFase))
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 space-y-8">
+    <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
       <header>
         <h1 className="text-2xl font-extrabold text-blue-900">Fixture</h1>
-        <p className="text-sm text-slate-500 mt-0.5">{partidos.length} partido{partidos.length !== 1 ? 's' : ''}</p>
       </header>
 
-      {fasesOrdenadas.length === 0 && (
-        <p className="text-center text-slate-400 py-12 text-sm">Aún no hay partidos programados.</p>
-      )}
+      <CategoriaTabs categorias={categorias} selected={categoriaId} onChange={setCategoriaId} />
 
-      {fasesOrdenadas.map((fase) => (
-        <section key={fase}>
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-200 pb-1">
-            {fase}
-          </h2>
-          <div className="space-y-3">
-            {porFase[fase]
-              .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
-              .map((p) => (
-                <TarjetaPartido key={p.id} partido={p} />
-              ))}
-          </div>
-        </section>
-      ))}
+      {loading ? (
+        <Spinner />
+      ) : error ? (
+        <p className="text-center text-slate-400 text-sm">{error}</p>
+      ) : fasesOrdenadas.length === 0 ? (
+        <p className="text-center text-slate-400 py-8 text-sm">
+          No hay partidos programados en esta categoría.
+        </p>
+      ) : (
+        fasesOrdenadas.map((fase) => (
+          <section key={fase}>
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-200 pb-1">
+              {fase}
+            </h2>
+            <div className="space-y-3">
+              {porFase[fase]
+                .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+                .map((p) => <TarjetaPartido key={p.id} partido={p} />)}
+            </div>
+          </section>
+        ))
+      )}
     </div>
   )
 }

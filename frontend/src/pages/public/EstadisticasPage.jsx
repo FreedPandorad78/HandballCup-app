@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
+import { getCategorias } from '../../api/categorias'
 import { getGoleadores, getTarjetas } from '../../api/estadisticas'
+import CategoriaTabs from '../../components/ui/CategoriaTabs'
 import Spinner from '../../components/ui/Spinner'
 
 const TABS = [
@@ -8,9 +10,8 @@ const TABS = [
 ]
 
 function TablaGoleadores({ rows }) {
-  if (rows.length === 0) {
-    return <EmptyState msg="Aún no hay goles registrados." />
-  }
+  if (rows.length === 0)
+    return <EmptyState msg="Aún no hay goles registrados en esta categoría." />
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       <table className="min-w-full text-sm">
@@ -31,8 +32,7 @@ function TablaGoleadores({ rows }) {
                 <p className="text-xs text-slate-400 sm:hidden">{r.equipo} · #{r.numero_camiseta}</p>
               </td>
               <td className="px-2 py-2.5 text-slate-500 text-sm hidden sm:table-cell">
-                {r.equipo}
-                <span className="ml-1 text-xs text-slate-400">#{r.numero_camiseta}</span>
+                {r.equipo} <span className="text-xs text-slate-400">#{r.numero_camiseta}</span>
               </td>
               <td className="px-3 py-2.5 text-center font-bold text-blue-900 tabular-nums text-base">{r.goles}</td>
             </tr>
@@ -44,9 +44,8 @@ function TablaGoleadores({ rows }) {
 }
 
 function TablaTarjetas({ rows }) {
-  if (rows.length === 0) {
-    return <EmptyState msg="Aún no hay tarjetas registradas." />
-  }
+  if (rows.length === 0)
+    return <EmptyState msg="Aún no hay tarjetas registradas en esta categoría." />
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       <table className="min-w-full text-sm">
@@ -68,8 +67,7 @@ function TablaTarjetas({ rows }) {
                 <p className="text-xs text-slate-400 sm:hidden">{r.equipo} · #{r.numero_camiseta}</p>
               </td>
               <td className="px-2 py-2.5 text-slate-500 text-sm hidden sm:table-cell">
-                {r.equipo}
-                <span className="ml-1 text-xs text-slate-400">#{r.numero_camiseta}</span>
+                {r.equipo} <span className="text-xs text-slate-400">#{r.numero_camiseta}</span>
               </td>
               <td className="px-3 py-2.5 text-center font-semibold text-yellow-600 tabular-nums">{r.amarillas}</td>
               <td className="px-3 py-2.5 text-center font-semibold text-red-600 tabular-nums">{r.rojas}</td>
@@ -90,27 +88,32 @@ function EmptyState({ msg }) {
 }
 
 export default function EstadisticasPage() {
+  const [categorias, setCategorias] = useState([])
+  const [categoriaId, setCategoriaId] = useState(null)
   const [tab, setTab] = useState('goleadores')
   const [goleadores, setGoleadores] = useState([])
   const [tarjetas, setTarjetas] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
 
   useEffect(() => {
-    Promise.all([getGoleadores(), getTarjetas()])
+    getCategorias().then((res) => {
+      setCategorias(res.data)
+      if (res.data.length > 0) setCategoriaId(res.data[0].id)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!categoriaId) return
+    setLoading(true)
+    Promise.all([getGoleadores(categoriaId), getTarjetas(categoriaId)])
       .then(([gRes, tRes]) => {
         setGoleadores(gRes.data)
         setTarjetas(tRes.data)
       })
-      .catch(() => setError('No se pudo cargar las estadísticas.'))
       .finally(() => setLoading(false))
-  }, [])
+  }, [categoriaId])
 
-  if (loading) return <Spinner />
-
-  if (error) {
-    return <div className="max-w-2xl mx-auto px-4 py-12 text-center text-slate-500 text-sm">{error}</div>
-  }
+  if (!categoriaId) return <Spinner />
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
@@ -118,7 +121,8 @@ export default function EstadisticasPage() {
         <h1 className="text-2xl font-extrabold text-blue-900">Estadísticas</h1>
       </header>
 
-      {/* Tabs */}
+      <CategoriaTabs categorias={categorias} selected={categoriaId} onChange={setCategoriaId} />
+
       <div className="flex border-b border-slate-200">
         {TABS.map((t) => (
           <button
@@ -135,7 +139,9 @@ export default function EstadisticasPage() {
         ))}
       </div>
 
-      {tab === 'goleadores' ? (
+      {loading ? (
+        <Spinner />
+      ) : tab === 'goleadores' ? (
         <TablaGoleadores rows={goleadores} />
       ) : (
         <TablaTarjetas rows={tarjetas} />
