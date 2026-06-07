@@ -23,7 +23,6 @@ export default function FixturePage() {
   const [categoriaId, setCategoriaId] = useState(null)
   const [partidos, setPartidos] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
 
   useEffect(() => {
     getCategorias().then((res) => {
@@ -35,13 +34,10 @@ export default function FixturePage() {
   useEffect(() => {
     if (!categoriaId) return
     setLoading(true)
-    getPartidos(categoriaId)
-      .then((res) => setPartidos(res.data))
-      .catch(() => setError('No se pudo cargar el fixture.'))
-      .finally(() => setLoading(false))
+    getPartidos(categoriaId).then((res) => setPartidos(res.data)).finally(() => setLoading(false))
   }, [categoriaId])
 
-  if (!categoriaId && !error) return <Spinner />
+  if (!categoriaId) return <Spinner />
 
   const porFase = partidos.reduce((acc, p) => {
     const fase = p.fase || 'General'
@@ -54,23 +50,21 @@ export default function FixturePage() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
       <header>
-        <h1 className="text-2xl font-extrabold text-blue-900">Fixture</h1>
+        <h1 className="text-2xl font-extrabold text-hc-900 dark:text-white">Fixture</h1>
       </header>
 
       <CategoriaTabs categorias={categorias} selected={categoriaId} onChange={setCategoriaId} />
 
       {loading ? (
         <Spinner />
-      ) : error ? (
-        <p className="text-center text-slate-400 text-sm">{error}</p>
       ) : fasesOrdenadas.length === 0 ? (
-        <p className="text-center text-slate-400 py-8 text-sm">
-          No hay partidos programados en esta categoría.
+        <p className="text-center text-slate-400 dark:text-zinc-500 py-8 text-sm">
+          No hay partidos en esta categoría.
         </p>
       ) : (
         fasesOrdenadas.map((fase) => (
           <section key={fase}>
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-200 pb-1">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-3 border-b border-slate-200 dark:border-zinc-700 pb-1">
               {fase}
             </h2>
             <div className="space-y-3">
