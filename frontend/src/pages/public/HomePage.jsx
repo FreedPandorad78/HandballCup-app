@@ -73,7 +73,7 @@ export default function HomePage() {
 
       {/* ── Hero ── */}
       <header className="pt-2">
-        <p className="font-display text-brand-accent text-sm tracking-widest2 mb-1">
+        <p className="font-display text-brand-muted text-sm tracking-widest2 mb-1">
           TORNEO UNIVERSITARIO · 2026
         </p>
         <h1 className="font-display text-6xl sm:text-7xl leading-none text-brand-text">
@@ -106,16 +106,16 @@ export default function HomePage() {
 
           {/* ── Tabla de posiciones ── */}
           <section>
-            <SectionTitle>POSICIONES</SectionTitle>
+            <h2 className="font-display text-2xl tracking-widest text-brand-text mb-4">POSICIONES</h2>
             <div className="rounded-xl overflow-hidden border border-brand-border">
               <table className="min-w-full">
                 <thead>
                   <tr className="bg-brand-faint">
                     <th className="pl-4 pr-2 py-3 text-left text-xs font-body font-semibold uppercase tracking-widest text-brand-muted w-8">#</th>
                     <th className="px-2 py-3 text-left text-xs font-body font-semibold uppercase tracking-widest text-brand-muted">Equipo</th>
-                    <th className="px-2 py-3 text-center text-xs font-body font-semibold uppercase tracking-widest text-brand-muted hidden sm:table-cell">PJ</th>
-                    <th className="px-2 py-3 text-center text-xs font-body font-semibold uppercase tracking-widest text-brand-muted hidden sm:table-cell">PG</th>
-                    <th className="px-2 py-3 text-center text-xs font-body font-semibold uppercase tracking-widest text-brand-muted hidden sm:table-cell">PP</th>
+                    <th className="px-2 py-3 text-center text-xs font-body font-semibold uppercase tracking-widest text-brand-muted">PJ</th>
+                    <th className="px-2 py-3 text-center text-xs font-body font-semibold uppercase tracking-widest text-brand-muted">PG</th>
+                    <th className="px-2 py-3 text-center text-xs font-body font-semibold uppercase tracking-widest text-brand-muted">PP</th>
                     <th className="px-2 py-3 text-center text-xs font-body font-semibold uppercase tracking-widest text-brand-muted">DG</th>
                     <th className="px-4 py-3 text-center text-xs font-body font-semibold uppercase tracking-widest text-brand-accent">PTS</th>
                   </tr>
@@ -138,9 +138,9 @@ export default function HomePage() {
                       <td className="px-2 py-3 font-body font-semibold text-brand-text text-sm whitespace-nowrap">
                         {e.nombre}
                       </td>
-                      <td className="px-2 py-3 text-center text-brand-muted tabular-nums text-sm hidden sm:table-cell">{e.pj}</td>
-                      <td className="px-2 py-3 text-center text-brand-muted tabular-nums text-sm hidden sm:table-cell">{e.pg}</td>
-                      <td className="px-2 py-3 text-center text-brand-muted tabular-nums text-sm hidden sm:table-cell">{e.pp}</td>
+                      <td className="px-2 py-3 text-center text-brand-muted tabular-nums text-sm">{e.pj}</td>
+                      <td className="px-2 py-3 text-center text-brand-muted tabular-nums text-sm">{e.pg}</td>
+                      <td className="px-2 py-3 text-center text-brand-muted tabular-nums text-sm">{e.pp}</td>
                       <GdCell value={e.gd} />
                       <td className="px-4 py-3 text-center">
                         <span className="font-display text-2xl text-brand-accent tabular-nums leading-none">{e.pts}</span>
