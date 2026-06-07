@@ -48,32 +48,37 @@ export default function FixturePage() {
   const fasesOrdenadas = ordenarFases(Object.keys(porFase))
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+    <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
       <header>
-        <h1 className="text-2xl font-extrabold text-hc-900 dark:text-white">Fixture</h1>
+        <p className="font-display text-brand-accent text-sm tracking-widest2 mb-1">CALENDARIO</p>
+        <h1 className="font-display text-5xl sm:text-6xl leading-none text-brand-text">FIXTURE</h1>
+        <div className="mt-4">
+          <CategoriaTabs categorias={categorias} selected={categoriaId} onChange={setCategoriaId} />
+        </div>
       </header>
-
-      <CategoriaTabs categorias={categorias} selected={categoriaId} onChange={setCategoriaId} />
 
       {loading ? (
         <Spinner />
       ) : fasesOrdenadas.length === 0 ? (
-        <p className="text-center text-slate-400 dark:text-zinc-500 py-8 text-sm">
+        <p className="text-center text-brand-muted py-10 text-sm font-body">
           No hay partidos en esta categoría.
         </p>
       ) : (
-        fasesOrdenadas.map((fase) => (
-          <section key={fase}>
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-3 border-b border-slate-200 dark:border-zinc-700 pb-1">
-              {fase}
-            </h2>
-            <div className="space-y-3">
-              {porFase[fase]
-                .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
-                .map((p) => <TarjetaPartido key={p.id} partido={p} />)}
-            </div>
-          </section>
-        ))
+        <div className="space-y-8">
+          {fasesOrdenadas.map((fase) => (
+            <section key={fase}>
+              <div className="flex items-center gap-3 mb-4">
+                <h2 className="font-display text-xl tracking-widest text-brand-text">{fase.toUpperCase()}</h2>
+                <div className="flex-1 h-px bg-brand-border" />
+              </div>
+              <div className="space-y-3">
+                {porFase[fase]
+                  .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+                  .map((p) => <TarjetaPartido key={p.id} partido={p} />)}
+              </div>
+            </section>
+          ))}
+        </div>
       )}
     </div>
   )
