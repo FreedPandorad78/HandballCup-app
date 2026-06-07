@@ -6,10 +6,10 @@ export default function CategoriaTabs({ categorias, selected, onChange }) {
         <button
           key={cat.id}
           onClick={() => onChange(cat.id)}
-          className={`px-4 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
+          className={`px-4 py-1.5 rounded-full text-sm font-body font-semibold whitespace-nowrap transition-colors ${
             selected === cat.id
-              ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25'
-              : 'bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-700'
+              ? 'bg-brand-accent text-white'
+              : 'border border-brand-border text-brand-muted hover:border-brand-accent hover:text-brand-accent'
           }`}
         >
           {cat.nombre}

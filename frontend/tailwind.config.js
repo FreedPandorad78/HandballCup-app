@@ -5,28 +5,38 @@ export default {
   theme: {
     extend: {
       colors: {
-        hc: {
-          50:  '#eef4ff',
-          100: '#d9e7ff',
-          200: '#bcd2ff',
-          300: '#8fb3fe',
-          400: '#5d8bfb',
-          500: '#3563f5',
-          600: '#1d47e8',
-          700: '#1635cc',
-          800: '#182ca6',
-          900: '#0d1f40',  // header / brand primary
-          950: '#060f20',  // dark mode page bg
+        brand: {
+          bg:          '#0a0e1a',  // fondo de página
+          card:        '#0f1524',  // tarjetas
+          'card-alt':  '#131b2e',  // filas alternadas
+          border:      '#1e2d45',  // bordes
+          accent:      '#e63946',  // rojo principal
+          'accent-dim':'#b82d38',  // rojo hover / pressed
+          text:        '#edf0f7',  // texto primario
+          muted:       '#6b7a9e',  // texto secundario
+          faint:       '#243050',  // bg muy sutil
         },
+      },
+      fontFamily: {
+        display: ['"Bebas Neue"', 'sans-serif'],
+        body:    ['"DM Sans"', 'sans-serif'],
+      },
+      letterSpacing: {
+        widest2: '0.2em',
       },
       keyframes: {
         scoreFlash: {
           '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.4', transform: 'scale(1.1)' },
+          '50%':       { opacity: '0.4', transform: 'scale(1.08)' },
+        },
+        livePulse: {
+          '0%, 100%': { opacity: '1' },
+          '50%':       { opacity: '0.5' },
         },
       },
       animation: {
         'score-flash': 'scoreFlash 0.4s ease-in-out',
+        'live-pulse':  'livePulse 1.5s ease-in-out infinite',
       },
     },
   },
